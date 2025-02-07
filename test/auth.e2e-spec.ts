@@ -17,15 +17,30 @@ describe('Authentication System (e2e)', () => {
   });
 
   it('handles a signup request', () => {
-   const email = "test123@email.com"
+    const email = "test123@email.com"
     return request(app.getHttpServer())
       .post("/auth/signup")
-      .send({ email, password: "test1234"})
+      .send({ email, password: "test1234" })
       .expect(201)
       .then((res) => {
-         const {id, email} = res.body;
-         expect(id).toBeDefined();
-         expect(email).toEqual(email);
+        const { id, email } = res.body;
+        expect(id).toBeDefined();
+        expect(email).toEqual(email);
       })
   });
+
+  it('sign up as a new user and get the currently logged in user', async () => {
+    const email = "test@email.com"
+    const res = await request(app.getHttpServer())
+      .post("/auth/signup")
+      .send({ email, password: "test1234" })
+      .expect(201)
+    const cookie = res.get("Set-Cookie");
+
+    const { body } = await request(app.getHttpServer())
+      .get("/auth/whoami")
+      .set('Cookie', cookie!)
+      .expect(200)
+    expect(body.email).toEqual(email);
+  })
 });
