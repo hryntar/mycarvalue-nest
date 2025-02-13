@@ -45,9 +45,11 @@ import { Report } from './reports/report.entity';
   }],
 })
 export class AppModule {
+  constructor(private configService: ConfigService) { }
+
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(cookieSession({
-      keys: ['5kj78az03r6']
+      keys: [this.configService.get<string>('COOKIE_KEY')]
     })).forRoutes('*');
   }
 }
