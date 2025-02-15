@@ -1,4 +1,12 @@
-const dbConfig = {};
+const { DataSource } = require('typeorm');
+
+const dbConfig = {
+  synchronize: false,
+  migrations: ['migrations/*.js'],
+  cli: {
+    migrationsDir: 'migrations',
+  },
+};
 
 switch (process.env.NODE_ENV) {
   case 'development':
@@ -21,6 +29,5 @@ switch (process.env.NODE_ENV) {
     throw new Error('NODE_ENV not set or invalid');
 }
 
-console.log('dbConfig:', dbConfig);
-
-module.exports = dbConfig;
+const dataSource = new DataSource(dbConfig);
+module.exports = dataSource;
